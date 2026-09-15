@@ -3,7 +3,7 @@ import io
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-from langchain_core.tools import tool
+from crewai.tools import tool
 
 # Global variable to keep track of the current dataset path
 _CURRENT_DATA_PATH = None
@@ -22,12 +22,12 @@ def load_data(file_path: str) -> pd.DataFrame:
         raise ValueError("Unsupported file format. Please upload a .csv or .xlsx file.")
 
 @tool("Inspect Dataset Schema and Summary Statistics")
-def inspect_dataset_schema(file_path: str = None) -> str:
+def inspect_dataset_schema(file_path: str = "") -> str:
     """
     Inspects the CSV or Excel file to return column names, data types, missing value counts,
     and summary statistics (mean, std, min, max, quantiles).
     """
-    target_path = file_path or _CURRENT_DATA_PATH
+    target_path = file_path if file_path else _CURRENT_DATA_PATH
     if not target_path or not os.path.exists(target_path):
         return "Error: Data file path not provided or file does not exist."
 

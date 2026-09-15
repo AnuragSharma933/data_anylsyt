@@ -1,8 +1,7 @@
 import os
 import shutil
 from typing import Optional, Dict, Any
-from crewai import Agent, Task, Crew, Process
-from langchain_groq import ChatGroq
+from crewai import Agent, Task, Crew, Process, LLM
 from tools import inspect_dataset_schema, execute_python_analytics, set_current_data_path
 
 def clean_output_directory():
@@ -17,14 +16,14 @@ def clean_output_directory():
     if os.path.exists(final_report):
         os.remove(final_report)
 
-def get_groq_llm(api_key: str, model_name: str) -> ChatGroq:
+def get_groq_llm(api_key: str, model_name: str) -> LLM:
     """Initialize Groq LLM instance for CrewAI agents."""
     model_id = model_name
     if not model_id.startswith("groq/") and not "/" in model_id:
-        model_id = model_id  # langchain_groq expects model name like llama-3.3-70b-versatile
-    return ChatGroq(
-        groq_api_key=api_key,
-        model_name=model_id,
+        model_id = f"groq/{model_id}"
+    return LLM(
+        model=model_id,
+        api_key=api_key,
         temperature=0.2
     )
 
