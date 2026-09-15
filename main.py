@@ -1,8 +1,12 @@
 import os
 import shutil
 from typing import Optional, Dict, Any
+import litellm
 from crewai import Agent, Task, Crew, Process, LLM
 from tools import inspect_dataset_schema, execute_python_analytics, set_current_data_path
+
+# Globally drop unsupported LLM parameters (like cache_breakpoint) for Groq/LiteLLM
+litellm.drop_params = True
 
 def clean_output_directory():
     """Ensure clean outputs folder structure before running new analysis."""
@@ -17,7 +21,7 @@ def clean_output_directory():
         os.remove(final_report)
 
 def get_groq_llm(api_key: str, model_name: str) -> LLM:
-    """Initialize Groq LLM instance for CrewAI agents with drop_params enabled."""
+    """Initialize Groq LLM instance for CrewAI agents."""
     model_id = model_name
     if not model_id.startswith("groq/") and not "/" in model_id:
         model_id = f"groq/{model_id}"
